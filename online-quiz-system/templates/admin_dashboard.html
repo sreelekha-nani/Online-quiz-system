@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - QuizMaster</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="navbar-brand">🚀 QuizMaster Admin</a>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('add_question') }}">Add Question</a></li>
+            <li><a href="{{ url_for('logout') }}" class="nav-btn">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <div class="card card-large">
+            <h1>Admin Dashboard</h1>
+            <p class="subtitle">Welcome, Admin {{ session.get('admin_name') }}! Monitor and manage your quiz system here.</p>
+            
+            <div class="analytics-grid">
+                <div class="stat-card">
+                    <h3>Total Students</h3>
+                    <div class="value">{{ analytics.total_students }}</div>
+                </div>
+                <div class="stat-card" style="border-bottom-color: #1cc88a;">
+                    <h3>Quizzes Taken</h3>
+                    <div class="value">{{ analytics.total_quizzes }}</div>
+                </div>
+                <div class="stat-card" style="border-bottom-color: #f6c23e;">
+                    <h3>Avg Score</h3>
+                    <div class="value">{{ analytics.avg_score }}</div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 1.5rem; color: var(--text-main);">📊 Student Performance</h2>
+                <a href="{{ url_for('add_question') }}" class="btn btn-primary" style="width: auto; padding: 10px 20px;">+ New Question</a>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Score</th>
+                            <th>Total</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for res in results %}
+                        <tr>
+                            <td style="font-weight: 600;">{{ res.student_name }}</td>
+                            <td style="color: #1cc88a; font-weight: 700;">{{ res.score }}</td>
+                            <td>{{ res.total_questions }}</td>
+                            <td style="font-size: 0.85rem; color: var(--text-muted);">{{ res.date.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" style="text-align: center; padding: 30px;">No quiz attempts recorded yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 style="font-size: 1.5rem; color: var(--text-main); margin-top: 40px; margin-bottom: 20px;">📚 Question Bank</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Question Text</th>
+                            <th>Correct</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for q in questions %}
+                        <tr>
+                            <td style="color: var(--text-muted);">#{{ q.id }}</td>
+                            <td>{{ q.text }}</td>
+                            <td><span style="background: #eef2ff; color: #4e73df; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.85rem;">Option {{ q.correct_option }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <a href="{{ url_for('index') }}" class="back-home">Return to Home</a>
+        </div>
+    </div>
+</body>
+</html>

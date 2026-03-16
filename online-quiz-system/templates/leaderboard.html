@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - QuizMaster</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="navbar-brand">🚀 QuizMaster</a>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('leaderboard') }}">Leaderboard</a></li>
+            {% if session.get('user_name') or session.get('admin_logged_in') %}
+                <li><a href="{{ url_for('logout') }}" class="nav-btn">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('register') }}" class="nav-btn">Register</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <div class="card card-large">
+            <div style="font-size: 4rem; margin-bottom: 10px;">👑</div>
+            <h1>Global Leaderboard</h1>
+            <p class="subtitle">See who's leading the pack today!</p>
+            
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">Rank</th>
+                            <th>Student Name</th>
+                            <th>Best Score</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for res in top_results %}
+                        <tr>
+                            <td style="font-weight: 700; color: #667eea;">
+                                {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}#{{ loop.index }}{% endif %}
+                            </td>
+                            <td style="font-weight: 600;">{{ res.student_name }}</td>
+                            <td>
+                                <span style="background: #e1fdf4; color: #1cc88a; padding: 5px 15px; border-radius: 20px; font-weight: 800;">
+                                    {{ res.score }} / {{ res.total_questions }}
+                                </span>
+                            </td>
+                            <td style="font-size: 0.85rem; color: var(--text-muted);">{{ res.date.strftime('%Y-%m-%d') }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" style="text-align: center; padding: 30px;">No rankings available yet. Be the first to play!</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 35px; border-top: 1px solid #eee; padding-top: 30px;">
+                <a href="{{ url_for('start_quiz') }}" class="btn btn-primary" style="width: auto; padding: 12px 40px;">🔥 Take the Challenge</a>
+            </div>
+
+            <a href="{{ url_for('index') }}" class="back-home">Return to Home</a>
+        </div>
+    </div>
+</body>
+</html>

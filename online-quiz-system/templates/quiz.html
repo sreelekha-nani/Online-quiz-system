@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz in Progress - QuizMaster</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="navbar-brand">🚀 QuizMaster</a>
+        <div id="timer-box">
+            <span>⏱️ Time Left:</span>
+            <span id="timer">60</span>s
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <span style="font-weight: 700; color: #667eea; font-size: 0.9rem; text-transform: uppercase;">Question {{ current_num }} / {{ total_num }}</span>
+                <div style="height: 8px; width: 150px; background: #eee; border-radius: 10px; overflow: hidden;">
+                    <div style="width: {{ (current_num / total_num) * 100 }}%; height: 100%; background: var(--primary-gradient);"></div>
+                </div>
+            </div>
+
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="flash-msg">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <h2 style="text-align: left; margin-bottom: 25px; line-height: 1.4; color: var(--text-main);">{{ question.text }}</h2>
+            
+            <form action="{{ url_for('quiz') }}" method="POST" id="quiz-form">
+                <ul class="options-list">
+                    <li class="option-item">
+                        <input type="radio" name="option" value="1" id="op1" required>
+                        <label for="op1">{{ question.option1 }}</label>
+                    </li>
+                    <li class="option-item">
+                        <input type="radio" name="option" value="2" id="op2">
+                        <label for="op2">{{ question.option2 }}</label>
+                    </li>
+                    <li class="option-item">
+                        <input type="radio" name="option" value="3" id="op3">
+                        <label for="op3">{{ question.option3 }}</label>
+                    </li>
+                    <li class="option-item">
+                        <input type="radio" name="option" value="4" id="op4">
+                        <label for="op4">{{ question.option4 }}</label>
+                    </li>
+                </ul>
+                <button type="submit" class="btn btn-primary" style="margin-top: 30px;">Next Question →</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 60;
+        const timerElement = document.getElementById('timer');
+        const quizForm = document.getElementById('quiz-form');
+
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+
+            if (timeLeft <= 10) {
+                timerElement.classList.add('low');
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                const radios = document.getElementsByName('option');
+                radios.forEach(radio => radio.required = false);
+                quizForm.submit();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMaster - Online Quiz System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="navbar-brand">🚀 QuizMaster</a>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('leaderboard') }}">Leaderboard</a></li>
+            {% if session.get('user_name') or session.get('admin_logged_in') %}
+                <li><a href="{{ url_for('logout') }}" class="nav-btn">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('register') }}" class="nav-btn">Register</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <div class="card">
+            <h1>Welcome to QuizMaster</h1>
+            <p class="subtitle">Test your skills, climb the leaderboard, and become a pro!</p>
+
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="flash-msg">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            {% if session.get('user_name') %}
+                <h2 style="margin-bottom: 20px;">Hi, {{ session.get('user_name') }}! 👋</h2>
+                <a href="{{ url_for('start_quiz') }}" class="btn btn-success">Start Your Quiz</a>
+                <a href="{{ url_for('logout') }}" class="back-home">Sign Out</a>
+            {% elif session.get('admin_logged_in') %}
+                <h2 style="margin-bottom: 20px;">Admin: {{ session.get('admin_name') }} 🛠️</h2>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">Admin Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="back-home">Sign Out</a>
+            {% else %}
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">Student Login</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-success">Student Registration</a>
+                </div>
+                
+                <div style="margin: 30px 0; border-top: 1px solid #eee; padding-top: 20px;">
+                    <a href="{{ url_for('leaderboard') }}" style="color: #667eea; font-weight: 700; text-decoration: none; font-size: 1.1rem;">🏆 View Leaderboard</a>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 15px;">
+                    <p style="font-weight: 600; margin-bottom: 10px; color: var(--text-muted);">Administrators Only</p>
+                    <div style="display: flex; gap: 10px;">
+                        <a href="{{ url_for('admin_login') }}" class="btn btn-secondary" style="flex: 1;">Admin Login</a>
+                        <a href="{{ url_for('admin_register') }}" class="btn btn-secondary" style="flex: 1; background: transparent; color: #636e72; border: 2px solid #eee;">Register</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
