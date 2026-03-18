@@ -10,8 +10,21 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "super-secret-key")
 
 # Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:///quiz.db")
+db_url = os.environ.get("DATABASE_URL", "sqlite:///quiz.db")
+
+# Render provides 'postgres://', but SQLAlchemy 1.4+ requires 'postgresql://'
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Ensure the instance folder exists for SQLite
+if not os.path.exists(app.instance_path):
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass
 
 db = SQLAlchemy(app)
 
